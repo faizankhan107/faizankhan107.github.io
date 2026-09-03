@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Muhammad Faizan Khan — Time series forecasting & LLM research</title>
+<meta name="description" content="PhD researcher at Xi'an Jiaotong University working on deep learning for time series forecasting and LLM-based knowledge systems.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F8F6;
+    --ink:#14181C;
+    --ink-soft:#4A545C;
+    --rule:#D9DED8;
+    --signal:#12554F;
+    --horizon:#A8641A;
+    --band:rgba(18,85,79,.10);
+    --serif:"IBM Plex Serif",Georgia,serif;
+    --sans:"IBM Plex Sans",system-ui,sans-serif;
+    --mono:"IBM Plex Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:var(--sans);font-size:17px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--signal);text-decoration:none;border-bottom:1px solid rgba(18,85,79,.35)}
+  a:hover{border-bottom-color:var(--signal)}
+  a:focus-visible{outline:2px solid var(--horizon);outline-offset:3px;border-radius:2px}
+  .wrap{max-width:960px;margin:0 auto;padding:0 28px}
+
+  /* ---------- hero ---------- */
+  header.hero{
+    position:relative;overflow:hidden;
+    border-bottom:1px solid var(--rule);
+    background-image:
+      linear-gradient(to right,rgba(20,24,28,.045) 1px,transparent 1px),
+      linear-gradient(to bottom,rgba(20,24,28,.045) 1px,transparent 1px);
+    background-size:28px 28px;
+  }
+  .hero .wrap{padding-top:64px;padding-bottom:0}
+  h1{
+    font-family:var(--serif);font-weight:600;
+    font-size:clamp(2.3rem,6.5vw,3.9rem);line-height:1.03;
+    letter-spacing:-.02em;margin:0 0 18px;
+  }
+  .lede{font-size:clamp(1.02rem,2.4vw,1.2rem);max-width:56ch;color:var(--ink-soft);margin:0 0 22px}
+  .lede strong{color:var(--ink);font-weight:600}
+  .affil{
+    font-family:var(--mono);font-size:.78rem;letter-spacing:.02em;
+    color:var(--ink-soft);margin:0 0 30px;line-height:1.9;
+  }
+  .contact{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:34px}
+  .contact a{
+    border:1px solid var(--rule);border-radius:2px;background:#fff;
+    padding:7px 13px;font-size:.86rem;color:var(--ink);
+  }
+  .contact a:hover{border-color:var(--signal);color:var(--signal)}
+
+  /* forecast plot */
+  figure.plot{margin:0;padding:0 0 8px}
+  .plot svg{display:block;width:100%;height:auto}
+  .plot figcaption{
+    font-family:var(--mono);font-size:.72rem;color:var(--ink-soft);
+    padding:6px 0 22px;display:flex;gap:22px;flex-wrap:wrap;
+  }
+  .key{display:inline-flex;align-items:center;gap:7px}
+  .key i{display:block;width:22px;height:0;border-top:2px solid var(--signal)}
+  .key.f i{border-top:2px dashed var(--horizon)}
+  .draw{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:draw 1.5s ease-out forwards}
+  .draw.b{animation-delay:1.4s}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  .fadein{opacity:0;animation:fade .8s ease-out 2.6s forwards}
+  @keyframes fade{to{opacity:1}}
+  @media (prefers-reduced-motion:reduce){
+    .draw{animation:none;stroke-dashoffset:0}
+    .fadein{animation:none;opacity:1}
+  }
+
+  /* ---------- sections ---------- */
+  main .wrap{padding-top:8px}
+  section{padding:52px 0;border-bottom:1px solid var(--rule)}
+  section:last-of-type{border-bottom:0}
+  .row{display:grid;grid-template-columns:150px 1fr;gap:34px;align-items:start}
+  .margin-note{
+    font-family:var(--mono);font-size:.74rem;line-height:1.7;
+    color:var(--ink-soft);padding-top:6px;
+  }
+  .margin-note b{display:block;color:var(--ink);font-weight:500;font-size:.82rem;margin-bottom:4px}
+  h2{
+    font-family:var(--serif);font-weight:600;font-size:1.62rem;
+    letter-spacing:-.01em;margin:0 0 16px;
+  }
+  h3{font-family:var(--sans);font-size:1.02rem;font-weight:600;margin:26px 0 6px}
+  h3:first-of-type{margin-top:0}
+  p{margin:0 0 14px;max-width:70ch}
+  ul{margin:0 0 14px;padding-left:18px;max-width:70ch}
+  li{margin-bottom:7px}
+
+  .stack{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 0}
+  .stack span{
+    font-family:var(--mono);font-size:.74rem;color:var(--ink-soft);
+    border:1px solid var(--rule);border-radius:2px;padding:4px 9px;background:#fff;
+  }
+
+  /* results table */
+  table{border-collapse:collapse;width:100%;max-width:560px;font-size:.9rem;margin:8px 0 6px}
+  th,td{text-align:left;padding:8px 12px 8px 0;border-bottom:1px solid var(--rule)}
+  th{font-weight:500;font-family:var(--mono);font-size:.74rem;color:var(--ink-soft)}
+  td.num{font-family:var(--mono);text-align:right;padding-right:0}
+  tr.best td{color:var(--signal);font-weight:600}
+  .caption{font-size:.8rem;color:var(--ink-soft);max-width:60ch}
+
+  /* publications */
+  ol.pubs{list-style:none;margin:0;padding:0;counter-reset:pub}
+  ol.pubs li{
+    display:grid;grid-template-columns:26px 1fr;gap:12px;
+    padding:13px 0;border-bottom:1px solid var(--rule);margin:0;
+  }
+  ol.pubs li:last-child{border-bottom:0}
+  ol.pubs li::before{
+    counter-increment:pub;content:counter(pub);
+    font-family:var(--mono);font-size:.75rem;color:var(--ink-soft);padding-top:3px;
+  }
+  .pub-title{font-family:var(--serif);font-size:1rem;line-height:1.4}
+  .pub-meta{font-family:var(--mono);font-size:.73rem;color:var(--ink-soft);margin-top:3px}
+  .role{color:var(--horizon)}
+
+  footer{padding:40px 0 60px;font-family:var(--mono);font-size:.76rem;color:var(--ink-soft)}
+  footer p{margin:0 0 6px}
+
+  @media (max-width:720px){
+    body{font-size:16px}
+    .row{grid-template-columns:1fr;gap:14px}
+    .margin-note{padding-top:0;border-left:2px solid var(--rule);padding-left:12px}
+    .hero .wrap{padding-top:44px}
+    section{padding:40px 0}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>Muhammad Faizan Khan</h1>
+    <p class="lede">I work on forecasting what happens next — wind power hours ahead, and the knowledge a language model should trust when documents disagree.</p>
+    <p class="affil">
+      PhD researcher · Faculty of Electronics and Information Technology<br>
+      Xi'an Jiaotong University, Xi'an, China
+    </p>
+    <nav class="contact">
+      <a href="mailto:faizan.khan@stu.xjtu.edu.cn">faizan.khan@stu.xjtu.edu.cn</a>
+      <a href="https://github.com/faizankhan107">GitHub</a>
+      <a href="Muhammad_Faizan_Khan_CV.pdf">Download CV</a>
+    </nav>
+
+    <figure class="plot">
+      <svg viewBox="0 0 900 190" role="img" aria-label="A power curve with observed history and a forecast horizon with an uncertainty band.">
+        <line x1="0" y1="170" x2="900" y2="170" stroke="#D9DED8" stroke-width="1"/>
+        <line x1="560" y1="14" x2="560" y2="170" stroke="#D9DED8" stroke-width="1" stroke-dasharray="3 4"/>
+        <path class="fadein" d="M560 96 L620 74 L680 96 L740 58 L800 84 L860 50 L860 118 L800 132 L740 112 L680 144 L620 126 L560 96 Z" fill="var(--band)"/>
+        <path class="draw" style="--len:1100"
+              d="M0 132 L45 118 L90 140 L135 104 L180 122 L225 86 L270 104 L315 70 L360 92 L405 118 L450 96 L495 124 L560 96"
+              fill="none" stroke="var(--signal)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+        <path class="draw b" style="--len:420"
+              d="M560 96 L620 100 L680 120 L740 85 L800 108 L860 84"
+              fill="none" stroke="var(--horizon)" stroke-width="2.2" stroke-dasharray="6 5" stroke-linecap="round"/>
+        <circle class="fadein" cx="560" cy="96" r="3.6" fill="var(--horizon)"/>
+      </svg>
+      <figcaption>
+        <span class="key"><i></i> observed power</span>
+        <span class="key f"><i></i> forecast, 15–180 min ahead</span>
+        <span class="key">shaded: prediction interval</span>
+      </figcaption>
+    </figure>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="forecasting">
+    <div class="row">
+      <div class="margin-note"><b>Research 01</b>Time series forecasting<br>2025 – present</div>
+      <div>
+        <h2>Wind power forecasting that beats persistence</h2>
+        <p>Short-horizon wind power is deceptively hard: the naive persistence baseline is strong enough that most published deep models quietly lose to it. My work starts by measuring against that baseline honestly, then builds models that earn their complexity.</p>
+        <ul>
+          <li>Benchmarked iTransformer, TimeXer, PatchTST, TimesNet and DLinear on ETTm1, ECL, Weather and Traffic, and on real SCADA data from a 25 MW farm at 15/30/60/180-minute horizons.</li>
+          <li>Designed a physics-guided Transformer with a separate physical branch and an adaptive gate, plus a regime-aware ensemble conditioned on wind-speed bin, direction sector and ramp state.</li>
+          <li>Built the pipeline end to end: cleaning, physical feature engineering, sliding windows over continuous segments, splits that never cross turbines or time, and bootstrap confidence intervals on every reported gain.</li>
+        </ul>
+        <h3>SCADA farm, mean absolute error in kW</h3>
+        <table>
+          <thead><tr><th>Model</th><th class="num">15 min</th><th class="num">60 min</th><th class="num">180 min</th></tr></thead>
+          <tbody>
+            <tr><td>Persistence</td><td class="num">918</td><td class="num">1868</td><td class="num">3213</td></tr>
+            <tr class="best"><td>PatchTST</td><td class="num">806</td><td class="num">1608</td><td class="num">2395</td></tr>
+            <tr><td>iTransformer</td><td class="num">839</td><td class="num">1557</td><td class="num">2495</td></tr>
+          </tbody>
+        </table>
+        <p class="caption">Four turbines, 5-minute sampling, farm rated 25 MW. Baselines reported alongside every model, including where the models lose.</p>
+        <div class="stack"><span>PyTorch</span><span>Time-Series-Library</span><span>LightGBM</span><span>NumPy / pandas</span><span>RTX 4080 SUPER</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="llm">
+    <div class="row">
+      <div class="margin-note"><b>Research 02</b>LLM Wiki &amp; retrieval<br>2025 – present</div>
+      <div>
+        <h2>A knowledge base that knows what it no longer believes</h2>
+        <p>Document-oriented retrieval records what a document asserted, but not what that assertion replaced. Contradictions pile up unordered, and the model answers fluently from whichever chunk it happened to retrieve. I am building an LLM Wiki that keeps this straight.</p>
+        <ul>
+          <li>A typed supersession relation with validity intervals on edges, so a retired fact stays traceable instead of competing with the fact that replaced it.</li>
+          <li>A separate cross-document resolution stage and provenance binding, with the current status projected onto compiled pages.</li>
+          <li>A working prototype over meeting minutes with an automated test suite, which surfaced two silent defects — per-document validation dropping cross-document edges, and traversal starting from a non-head chain member.</li>
+          <li>Related work on GraphRAG and multimodal retrieval: rule-based entity extraction, unified text–image nodes, and Personalized PageRank propagation over the graph.</li>
+        </ul>
+        <div class="stack"><span>Python</span><span>FastAPI</span><span>LangChain</span><span>FAISS</span><span>Neo4j-style graphs</span><span>pytest</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="engineering">
+    <div class="row">
+      <div class="margin-note"><b>Engineering</b>Serving models</div>
+      <div>
+        <h2>From notebook to endpoint</h2>
+        <p>Research code is only useful when someone else can call it. I build the serving layer around my models: FastAPI endpoints with Pydantic validation and generated OpenAPI docs, async request handling and background jobs for long inference, containerised with Docker behind Uvicorn.</p>
+        <p>Earlier industry work covers the rest of the stack — backend development in Node.js and C# on a core banking implementation, MongoDB and SQL databases, and Linux server administration.</p>
+        <div class="stack"><span>FastAPI</span><span>Docker</span><span>Uvicorn</span><span>Node.js</span><span>C#</span><span>MongoDB</span><span>SQL</span><span>Git</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="freelance">
+    <div class="row">
+      <div class="margin-note"><b>Freelance</b>Fiverr &amp; Upwork<br>2017 – 2021</div>
+      <div>
+        <h2>Fifty-plus websites, four years, clients on five continents</h2>
+        <p>Before research, I paid my way through university building websites. Over four years on Fiverr and Upwork I delivered more than 50 projects for clients across Europe, North America, the Middle East and Asia — running the whole cycle myself, from the first requirements call to post-launch support.</p>
+        <p>The largest was the institutional website for Government College of Technology, Faisalabad: information architecture for departments and admissions, a responsive front end, a content system the staff could update without me, and the hosting and domain setup behind it.</p>
+        <ul>
+          <li>Custom websites, landing pages and WordPress themes; plugin configuration and CMS setup</li>
+          <li>PHP and MySQL backends, e-commerce builds, site migrations and performance tuning</li>
+          <li>Hosting, cPanel and Plesk administration, email configuration, ongoing maintenance contracts</li>
+        </ul>
+        <p>Four years of that work is why I write research code that other people can actually run.</p>
+        <div class="stack"><span>WordPress</span><span>PHP</span><span>MySQL</span><span>HTML / CSS / JS</span><span>cPanel</span><span>SEO</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="publications">
+    <div class="row">
+      <div class="margin-note"><b>Publications</b>Six papers<br>First author on three<br>Latest in IJSHE, 2026</div>
+      <div>
+        <h2>Papers</h2>
+        <ol class="pubs">
+          <li><div>
+            <div class="pub-title">Hybrid Modulation Classification: Traditional Signal Processing and LSTM</div>
+            <div class="pub-meta">ICMMT 2025 · <span class="role">first author</span></div>
+          </div></li>
+          <li><div>
+            <div class="pub-title">Automatic Modulation Classification using a Deep Learning Model based on ResNet</div>
+            <div class="pub-meta"><span class="role">first author</span></div>
+          </div></li>
+          <li><div>
+            <div class="pub-title">A Convolutional Neural Network and Particle Swarm Optimization Hybrid Model for Scripting Language Handwritten Character Recognition</div>
+            <div class="pub-meta"><span class="role">first author</span></div>
+          </div></li>
+          <li><div>
+            <div class="pub-title"><a href="https://doi.org/10.1108/IJSHE-01-2026-0113">Green HRM and STARA Capabilities in Higher Education: The Mediating Roles of Green Innovation and Green Passion in Sustainable Performance</a></div>
+            <div class="pub-meta">International Journal of Sustainability in Higher Education (Emerald), August 2026 · co-author · doi 10.1108/IJSHE-01-2026-0113</div>
+          </div></li>
+          <li><div>
+            <div class="pub-title">Accurate Detection of Heart Disease Using the CardioFusion Ensemble Algorithm</div>
+            <div class="pub-meta">ICECE 2024 · co-author</div>
+          </div></li>
+          <li><div>
+            <div class="pub-title">Generating Synthetic Chest X-ray Images for Improved COVID-19 Detection Using Generative Adversarial Networks</div>
+            <div class="pub-meta">UCOM 2024 · co-author</div>
+          </div></li>
+        </ol>
+        <p style="margin-top:18px">Master's thesis: <em>Enhancing Automatic Modulation Classification Using Multi-Stream Deep Learning Architectures</em>, Xidian University, 2025.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="background">
+    <div class="row">
+      <div class="margin-note"><b>Background</b>Education<br>&amp; languages</div>
+      <div>
+        <h2>Background</h2>
+        <h3>Education</h3>
+        <ul>
+          <li>PhD, Faculty of Electronics and Information Technology, Xi'an Jiaotong University — 2025 to present</li>
+          <li>MSc Computer Science &amp; Artificial Intelligence, Xidian University — 2025, GPA 88%. Chinese Government Scholarship (CSC), fully funded.</li>
+        </ul>
+        <h3>Languages</h3>
+        <p>English, Urdu, Pashto and Hindi fluently. Chinese at HSK-3 (264/300). Group meetings and technical talks in both English and Chinese.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="row">
+      <div class="margin-note"><b>Contact</b>Open to research collaboration<br>and AI engineering roles</div>
+      <div>
+        <h2>Get in touch</h2>
+        <p>Email is the fastest way to reach me: <a href="mailto:faizan.khan@stu.xjtu.edu.cn">faizan.khan@stu.xjtu.edu.cn</a>. I am happy to talk about forecasting benchmarks, retrieval systems, or reviewing a manuscript.</p>
+        <p style="font-family:var(--mono);font-size:.82rem;color:var(--ink-soft)">
+          faizankhanzada97@outlook.com<br>
+          +86 132 0189 6939<br>
+          WeChat: Imfk07
+        </p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <p>Xi'an Jiaotong University, Xi'an, Shaanxi, China</p>
+  <p>Last updated September 2026.</p>
+</footer>
+
+</body>
+</html>
