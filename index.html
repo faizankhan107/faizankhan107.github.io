@@ -147,7 +147,7 @@
 <header class="hero">
   <div class="wrap">
     <h1>Muhammad Faizan Khan</h1>
-    <p class="lede">I work on forecasting what happens next — wind power hours ahead, and the knowledge a language model should trust when documents disagree.</p>
+    <p class="lede">I work on forecasting what happens next — wind power hours ahead, breathing picked up by radar across a room, and the knowledge a language model should trust when documents disagree.</p>
     <p class="affil">
       PhD researcher · School of Computer Science and Technology<br>
       National Key Laboratory of Human-Machine Hybrid Augmented Intelligence<br>
@@ -226,6 +226,21 @@
     </div>
   </section>
 
+  <section id="sensing">
+    <div class="row">
+      <div class="margin-note"><b>Research 03</b>Sensing &amp; activity<br>2026 – ongoing</div>
+      <div>
+        <h2>Breathing and movement as time series</h2>
+        <p>The same forecasting machinery applies to signals from the body. Two ongoing projects extend the work beyond energy data.</p>
+        <ul>
+          <li><b>Contactless respiration monitoring with IR-UWB radar</b> — extracting breathing waveforms from radar returns without contact, and building a model that stays robust when the subject moves. Aimed at a journal paper.</li>
+          <li><b>Human activity recognition from time series sensor data</b> — classifying activity from wearable and ambient sensor streams, using the same benchmarking discipline as the forecasting work.</li>
+        </ul>
+        <div class="stack"><span>PyTorch</span><span>IR-UWB radar</span><span>signal processing</span><span>SciPy</span></div>
+      </div>
+    </div>
+  </section>
+
   <section id="engineering">
     <div class="row">
       <div class="margin-note"><b>Engineering</b>Serving models</div>
@@ -252,6 +267,20 @@
         </ul>
         <p>Four years of that work is why I write research code that other people can actually run.</p>
         <div class="stack"><span>WordPress</span><span>PHP</span><span>MySQL</span><span>HTML / CSS / JS</span><span>cPanel</span><span>SEO</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="demos">
+    <div class="row">
+      <div class="margin-note"><b>Demos</b>Interactive<br>runs in the browser</div>
+      <div>
+        <h2>Two things you can poke at</h2>
+        <p>Both are self-contained pages, no server behind them.</p>
+        <h3><a href="projects/wind-forecasting/">Why persistence is hard to beat</a></h3>
+        <p>Move the forecast horizon from 15 minutes to 3 hours and watch the error grow, alongside the measured results from my SCADA experiments.</p>
+        <h3><a href="projects/llm-wiki/">The fact that was replaced last March</a></h3>
+        <p>Ask a question three documents disagree about. Compare what plain retrieval returns against what a knowledge base with supersession edges returns.</p>
       </div>
     </div>
   </section>
